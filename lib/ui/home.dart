@@ -153,10 +153,15 @@ class MovieListViewDetails extends StatelessWidget {
           MovieDetailsThumbnail(
             thumbnail: movie.images[0],
           ),
-          MovieDetailsHeaderWithPoster(movie: movie,)
+          MovieDetailsHeaderWithPoster(
+            movie: movie,
+          ),
+          MovieDetailsCast(
+            movie: movie,
+          ),
+          HorizontalLine(),
         ],
       ),
-
     );
   }
 }
@@ -207,12 +212,116 @@ class MovieDetailsHeaderWithPoster extends StatelessWidget {
   const MovieDetailsHeaderWithPoster({Key key, this.movie}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return Padding(padding: const EdgeInsets.symmetric(horizontal: 8.0),
-    child: Row(
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: Row(
+        children: <Widget>[
+          MoviePoster(poster: movie.images[0].toString()),
+          SizedBox(
+            width: 16,
+          ),
+          Expanded(
+            child: MovieDetailsHeader(movie: movie),
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class MovieDetailsHeader extends StatelessWidget {
+  final Movie movie;
+
+  const MovieDetailsHeader({Key key, this.movie}) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        MoviePoster(poster: movie.images[0].toString())
+        Text(
+          "${movie.year} . ${movie.genre}".toUpperCase(),
+          style: TextStyle(
+            fontWeight: FontWeight.w400,
+            color: Colors.cyan,
+          ),
+        ),
+        Text(
+          "${movie.title}",
+          style: TextStyle(
+            fontWeight: FontWeight.w500,
+            fontSize: 32,
+          ),
+        ),
+        Text.rich(TextSpan(
+            style: TextStyle(
+              fontSize: 14.5,
+              fontWeight: FontWeight.w300,
+            ),
+            children: <TextSpan>[
+              TextSpan(
+                text: movie.plot,
+              ),
+              TextSpan(
+                  text: "More...",
+                  style: TextStyle(
+                    color: Colors.indigo,
+                  ))
+            ])),
       ],
-    ),);
+    );
+  }
+}
+
+class MovieDetailsCast extends StatelessWidget {
+  final Movie movie;
+
+  const MovieDetailsCast({Key key, this.movie}) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Column(
+        children: <Widget>[
+          MovieField(field: "Cast", value: movie.actors),
+          MovieField(field: "Director", value: movie.director),
+          MovieField(
+            field: "Awards",
+            value: movie.awards,
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class MovieField extends StatelessWidget {
+  final String field;
+  final String value;
+
+  const MovieField({Key key, this.field, this.value}) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          "$field : ",
+          style: TextStyle(
+            color: Colors.black38,
+            fontSize: 14.5,
+            fontWeight: FontWeight.w300,
+          ),
+        ),
+        Expanded(
+          child: Text(value,
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 13.2,
+                fontWeight: FontWeight.w300,
+              )),
+        )
+      ],
+    );
   }
 }
 
@@ -223,17 +332,32 @@ class MoviePoster extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var borderRadius = BorderRadius.all(Radius.circular(10.0));
-    return Card(child: ClipRRect(
-      borderRadius: borderRadius,
-      child: Container(
-        width: MediaQuery.of(context).size.width / 4,
-        height: 160,
-        decoration: BoxDecoration(
-          image: DecorationImage(image: NetworkImage(poster),
-          fit: BoxFit.cover,)
+    return Card(
+      child: ClipRRect(
+        borderRadius: borderRadius,
+        child: Container(
+          width: MediaQuery.of(context).size.width / 4,
+          height: 160,
+          decoration: BoxDecoration(
+              image: DecorationImage(
+            image: NetworkImage(poster),
+            fit: BoxFit.cover,
+          )),
         ),
       ),
-    ),);
+    );
   }
 }
 
+class HorizontalLine extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0,  vertical: 12.0),
+      child: Container(
+        height: 0.5,
+        color: Colors.grey,
+      ),
+    );
+  }
+}
