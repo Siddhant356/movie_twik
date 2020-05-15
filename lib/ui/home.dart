@@ -37,45 +37,117 @@ class Home extends StatelessWidget {
       body: ListView.builder(
           itemCount: movieList.length,
           itemBuilder: (BuildContext context, int index) {
-            return Card(
-              elevation: 4.5,
-              color: Colors.white,
-              child: ListTile(
-                leading: CircleAvatar(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      image: DecorationImage(image: NetworkImage(movieList[index].images[0]),
-                      fit: BoxFit.cover),
-                      //color: Colors.blue,
-                      borderRadius: BorderRadius.circular(21.9),
-                    ),
-                  ),
+            return Stack(children: <Widget>[
+              movieCard(movieList[index], context),
+              Positioned(
+                top: 10.0,
+                  child: movieImage(movieList[index].images[0])),
+              
+            ]);
+//            return Card(
+//              elevation: 4.5,
+//              color: Colors.white,
+//              child: ListTile(
+//                leading: CircleAvatar(
+//                  child: Container(
+//                    decoration: BoxDecoration(
+//                      image: DecorationImage(
+//                          image: NetworkImage(movieList[index].images[0]),
+//                          fit: BoxFit.cover,
+//                      ),
+//                      //color: Colors.blue,
+//                      borderRadius: BorderRadius.circular(21.9),
+//                    ),
+//                  ),
+//                ),
+//                title: Text(movieList[index].title),
+//                subtitle: Text("${movieList[index].genre}"),
+//                trailing: Text("..."),
+//                // onTap: ()=> debugPrint("${movies.elementAt(index)}"),
+//                onTap: () {
+//                  Navigator.push(
+//                      context,
+//                      MaterialPageRoute(
+//                          builder: (context) => MovieListViewDetails(
+//                              movieName: movieList[index].title,
+//                              movie: movieList[index])));
+//                },
+//              ),
+//            );
+          }),
+    );
+  }
+
+  Widget movieCard(Movie movie, BuildContext context) {
+    return InkWell(
+      child: Container(
+        margin: EdgeInsets.only(left: 60),
+        width: MediaQuery.of(context).size.width,
+        height: 120.0,
+        child: Card(
+          color: Colors.black45,
+          child: Padding(
+            padding: const EdgeInsets.only(top: 8.0,bottom: 8.0, left: 54.0 ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text("${movie.title}"),
+                    Text("Rating: ${movie.imdbRating} / 10"),
+                  ],
                 ),
-                title: Text(movieList[index].title),
-                subtitle: Text("${movieList[index].genre}"),
-                trailing: Text("..."),
-                // onTap: ()=> debugPrint("${movies.elementAt(index)}"),
-                onTap: () {
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text("Released ${movie.released}"),
+                    Text("${movie.runtime}"),
+                    Text("${movie.rated}"),
+
+                  ],
+                ),
+
+
+              ],
+            ),
+          ),
+
+        ),
+      ),
+    onTap: () {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => MovieListViewDetails(movieName: movieList[index].title,
-                          movie: movieList[index])));
+                          builder: (context) => MovieListViewDetails(
+                              movieName: movie.title,
+                              movie: movie)));
                 },
-              ),
-            );
-          }),
+    );
+  }
+
+  Widget movieImage(String imageUrl){
+    return Container(
+      width: 100,
+      height: 100,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        image: DecorationImage(
+          image: NetworkImage(imageUrl ?? 'https://image.shutterstock.com/image-vector/upset-magnifying-glass-cute-not-260nw-1127749553.jpg'),
+          fit: BoxFit.cover,
+        ),
+      ),
     );
   }
 }
 
 class MovieListViewDetails extends StatelessWidget {
-
   final String movieName;
   final Movie movie;
 
-
-  const MovieListViewDetails({Key key, this.movieName, this.movie}) : super(key: key);
+  const MovieListViewDetails({Key key, this.movieName, this.movie})
+      : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -85,9 +157,11 @@ class MovieListViewDetails extends StatelessWidget {
       ),
       body: Center(
         child: Container(
-          child: RaisedButton(child: Text("Go Back ${this.movieName}"), onPressed: () {
-            Navigator.pop(context);
-          }),
+          child: RaisedButton(
+              child: Text("Go Back ${this.movieName}"),
+              onPressed: () {
+                Navigator.pop(context);
+              }),
         ),
       ),
     );
